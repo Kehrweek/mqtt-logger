@@ -134,8 +134,8 @@ func handleMessage(_ MQTT.Client, msg MQTT.Message) {
 	defer f.Close()
 
 	// Write message
-	line := fmt.Sprintf("[%s] %s\n",
-		time.Now().Format("2006.01.02 15:04:05"),
+	line := fmt.Sprintf("%s %s\n",
+		time.Now().Format("2006.01.02"),
 		string(msg.Payload()))
 	if _, err := f.WriteString(line); err != nil {
 		fmt.Println("Error writing log:", err)
