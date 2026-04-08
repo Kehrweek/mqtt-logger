@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 	"time"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
@@ -121,8 +120,8 @@ func onExit() {
 func handleMessage(_ MQTT.Client, msg MQTT.Message) {
 	// Build log file name: YYYY-MM-DD_topic.log
 	today := time.Now().Format("2006.01.02")
-	safeTopic := strings.ReplaceAll(msg.Topic(), "/", "_")
-	fileName := fmt.Sprintf("%s %s.log", today, safeTopic)
+	// safeTopic := strings.ReplaceAll(msg.Topic(), "/", "_")
+	fileName := fmt.Sprintf("%s.log", today)
 	logFile := filepath.Join(logDir, fileName)
 
 	// Open log file
@@ -134,8 +133,9 @@ func handleMessage(_ MQTT.Client, msg MQTT.Message) {
 	defer f.Close()
 
 	// Write message
-	line := fmt.Sprintf("%s %s\n",
-		time.Now().Format("2006.01.02"),
+	line := fmt.Sprintf("[%s] [%s] %s\n",
+		time.Now().Format("2006.01.02 15:04:05"),
+		msg.Topic(),
 		string(msg.Payload()))
 	if _, err := f.WriteString(line); err != nil {
 		fmt.Println("Error writing log:", err)
